@@ -14,6 +14,28 @@
             </LeetcodeEditor>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/LC/leetcode/editor/en/[2]Add Two Numbers.cpp">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="$PROJECT_DIR$/LC/leetcode/editor/en/doc/content/[2]Add Two Numbers.md" />
+              <option name="frontendQuestionId" value="leetcode.com2" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="$PROJECT_DIR$/LC/leetcode/editor/en/[2]Add Two Numbers.cpp" />
+              <option name="titleSlug" value="add-two-numbers" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/LC/leetcode/editor/en/[3]Longest Substring Without Repeating Characters.cpp">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="$PROJECT_DIR$/LC/leetcode/editor/en/doc/content/[3]Longest Substring Without Repeating Characters.md" />
+              <option name="frontendQuestionId" value="leetcode.com3" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="$PROJECT_DIR$/LC/leetcode/editor/en/[3]Longest Substring Without Repeating Characters.cpp" />
+              <option name="titleSlug" value="longest-substring-without-repeating-characters" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
