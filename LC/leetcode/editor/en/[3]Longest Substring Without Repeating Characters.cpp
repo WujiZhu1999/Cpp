@@ -39,10 +39,31 @@
 
 
 //leetcode submit region begin(Prohibit modification and deletion)
+#include <string>
+#include <unordered_map>
+using namespace std;
 class Solution {
 public:
     int lengthOfLongestSubstring(string s) {
-        
+        int maxL = 0, idx = 0, head = -1;
+        unordered_map<char, int> last_occur;
+        unordered_map<char, int>::iterator itr;
+        for (idx = 0; idx < s.size(); idx++) {
+            itr = last_occur.find(s[idx]);
+            if (itr != last_occur.end() && itr->second > head) {
+
+                maxL = (maxL < (idx -1 - head) ) ? idx - 1 - head: maxL;
+                head = itr->second;
+            }
+
+
+
+            last_occur[s[idx]] = idx;
+        }
+
+        maxL = (maxL < (idx - 1 - head) ) ? idx - 1 - head: maxL;
+        return maxL;
+
     }
 };
 //leetcode submit region end(Prohibit modification and deletion)
