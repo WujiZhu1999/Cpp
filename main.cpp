@@ -9,7 +9,6 @@
 #include "02_OOP/12_7_virtual_functions.cpp"
 #include "02_OOP/13_operator_overload.cpp"
 #include "02_OOP/14_functor_callable.cpp"
-
 int main() {
     // this is the playground for all cpp file
     //test_inplace();
@@ -27,6 +26,6 @@ int main() {
     //test_without_virtual_pointer();
     //test_operator_override();
     //test_type_conversion();
-    test_callable();
+    //test_callable();
     return 0;
 }
