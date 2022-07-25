@@ -58,6 +58,17 @@
             </LeetcodeEditor>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/LC/leetcode/editor/en/[6]Zigzag Conversion.cpp">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="$PROJECT_DIR$/LC/leetcode/editor/en/doc/content/[6]Zigzag Conversion.md" />
+              <option name="frontendQuestionId" value="leetcode.com6" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="$PROJECT_DIR$/LC/leetcode/editor/en/[6]Zigzag Conversion.cpp" />
+              <option name="titleSlug" value="zigzag-conversion" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
