@@ -69,6 +69,17 @@
             </LeetcodeEditor>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/LC/leetcode/editor/en/[7]Reverse Integer.cpp">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="$PROJECT_DIR$/LC/leetcode/editor/en/doc/content/[7]Reverse Integer.md" />
+              <option name="frontendQuestionId" value="leetcode.com7" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="$PROJECT_DIR$/LC/leetcode/editor/en/[7]Reverse Integer.cpp" />
+              <option name="titleSlug" value="reverse-integer" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
