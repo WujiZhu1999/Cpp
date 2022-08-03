@@ -9,6 +9,9 @@
 #include "02_OOP/12_7_virtual_functions.cpp"
 #include "02_OOP/13_operator_overload.cpp"
 #include "02_OOP/14_functor_callable.cpp"
+
+using namespace std;
+
 int main() {
     // this is the playground for all cpp file
     //test_inplace();
