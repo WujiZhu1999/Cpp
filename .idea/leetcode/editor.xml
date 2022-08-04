@@ -80,6 +80,17 @@
             </LeetcodeEditor>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/LC/leetcode/editor/en/[8]String to Integer (atoi).cpp">
+          <value>
+            <LeetcodeEditor>
+              <option name="contentPath" value="$PROJECT_DIR$/LC/leetcode/editor/en/doc/content/[8]String to Integer (atoi).md" />
+              <option name="frontendQuestionId" value="leetcode.com8" />
+              <option name="host" value="leetcode.com" />
+              <option name="path" value="$PROJECT_DIR$/LC/leetcode/editor/en/[8]String to Integer (atoi).cpp" />
+              <option name="titleSlug" value="string-to-integer-atoi" />
+            </LeetcodeEditor>
+          </value>
+        </entry>
       </map>
     </option>
   </component>
