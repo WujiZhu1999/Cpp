@@ -12,7 +12,23 @@
 
 using namespace std;
 
+class A{
+public:
+    int x;
+    A():x(0) {}
+
+    A(A&& another) = default;
+
+    A& operator= (A& a) {
+        cout << "copied" << endl;
+        this->x = a.x;
+        return *this;
+    }
+};
+
 int main() {
+    A a = A();
+    A a1 = std::move(a);
     // this is the playground for all cpp file
     //test_inplace();
     //test_pass_by_reference_value_difference();
