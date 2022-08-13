@@ -1,4 +1,5 @@
 #include <iostream>
+//----------------------------------- 02_OOP
 #include "01_Basics/03_inplace_experiment.cpp"
 #include "01_Basics/06_pass_by_reference.cpp"
 #include "02_OOP/05_constructors.cpp"
@@ -10,10 +11,17 @@
 #include "02_OOP/13_operator_overload.cpp"
 #include "02_OOP/14_functor_callable.cpp"
 
-using namespace std;
+// ----------------------------------- 03_STL
+#include "03_Standard_Library/001_Namespace/namespace.cpp"
+#include "03_Standard_Library/001_Namespace/namespace_included.h"
+#include "03_Standard_Library/001_Namespace/common_namespace_1.h"
+#include "03_Standard_Library/001_Namespace/common_namespace_2.h"
+#include "03_Standard_Library/001_Namespace/different_namespace_same_function.cpp"
+
+//using namespace std;
 
 int main() {
-
+    //----------------------------------- 02_OOP
     // this is the playground for all cpp file
     //test_inplace();
     //test_pass_by_reference_value_difference();
@@ -31,5 +39,20 @@ int main() {
     //test_operator_override();
     //test_type_conversion();
     //test_callable();
+
+    // ----------------------------------- 03_STL
+    //namespace_1::print_name();
+    //namespace_2::print_name();
+    //namespace_3::namespace_3_1::print_name();
+    //name_space_included::print_name();
+    //common_namespace::func1();
+    //common_namespace::func2();
+    //using namespace common_namespace;
+    //func1();
+    //func2();
+    //If we uncomment the common function defined within common_namespace (both 1 and 2), it will cause an error
+    //using namespace name1;
+    //using namespace name2; // No error here if we do not call the function
+    //func_same(); // error if we call the function
     return 0;
 }
