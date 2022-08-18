@@ -70,6 +70,14 @@ void test_constructors() {
 /**
  * About move constructor
  * */
+
+/**
+ * You need to inform C++ (specifically std::vector) that your move constructor and destructor does not throw,
+ * using noexcept. Then the move constructor will be called when the vector grows.
+ *
+ * If the constructor is not noexcept, std::vector can't use it,
+ * since then it can't ensure the exception guarantees demanded by the standard.
+ * */
 #include <vector>
 class TestDemo{
 public:

@@ -8,6 +8,13 @@ Standard library can be classified into:
 
 ## List of Contents
 - **1 Namespace**
+- **2 Common Functions**
+  - std::min, std::max
+  - std::move
+  - std::forward
+  - std::swap
+
+<details><summary>1 Namespace</summary>
 
 ## 1 Namespace
 When we want to include some standard libraries (or header files), we should:
@@ -62,3 +69,28 @@ namespace pollution and collision.**
 
 - same namespace --> same variable (defined in different file) --> error
 - different namespace --> same variable --> error if we call the function
+
+</details>
+
+<details><summary>2 Common Functions</summary>
+
+## 2 Common Functions
+### 1 std::min & std::max
+
+Check the [code](002_Common_Functions/min_max.cpp) here for an example.
+
+```c++
+min(a, b) // Returns the minimal value of a and b.
+min(a, b, comp) // Returns the minimal value of a and b according to the predicate comp.
+min(initializer list) // Returns the minimal value of the initializer list.
+min(initializer list, comp) // Returns the minimal value of the initializer list according to the predicate comp.
+
+// Same works for max/minmax
+```
+Note that comparator will determine which one is smaller (return true if first argument is smaller than the second one)
+
+### 2 std::move
+First we have to understand what is lvalue and what is rvalue: [video](../02_OOP/BackUpOfVideoReference/lvalues%20and%20rvalues%20in%20C++.mp4)
+
+
+</details>

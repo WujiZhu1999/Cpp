@@ -17,6 +17,7 @@
 #include "03_Standard_Library/001_Namespace/common_namespace_1.h"
 #include "03_Standard_Library/001_Namespace/common_namespace_2.h"
 #include "03_Standard_Library/001_Namespace/different_namespace_same_function.cpp"
+#include "03_Standard_Library/002_Common_Functions/min_max.cpp"
 
 //using namespace std;
 
@@ -54,5 +55,7 @@ int main() {
     //using namespace name1;
     //using namespace name2; // No error here if we do not call the function
     //func_same(); // error if we call the function
+    //test_min_max();
+
     return 0;
 }
