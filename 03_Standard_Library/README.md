@@ -172,5 +172,4 @@ inline void swap(T& a, T& b){
 }
 ```
 
-
 </details>
