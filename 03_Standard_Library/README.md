@@ -90,7 +90,60 @@ min(initializer list, comp) // Returns the minimal value of the initializer list
 Note that comparator will determine which one is smaller (return true if first argument is smaller than the second one)
 
 ### 2 std::move
-First we have to understand what is lvalue and what is rvalue: [video](../02_OOP/BackUpOfVideoReference/lvalues%20and%20rvalues%20in%20C++.mp4)
+- First we have to understand what is lvalue and what is rvalue: [video](../02_OOP/BackUpOfVideoReference/lvalues%20and%20rvalues%20in%20C++.mp4)
+- Then the following two video give a very good explanation around move semantics
+  - [move semantics](002_Common_Functions/BackUpVideos/Move%20Semantics%20in%20C++.mp4)
+  - [move operator and std::move](002_Common_Functions/BackUpVideos/stdmove%20and%20the%20Move%20Assignment%20Operator%20in%20C++.mp4)
 
 
+1. According to function `test_access_object_after_move()` in [file](002_Common_Functions/move.cpp). We can see that object is accessible
+even after we call std move on that.
+2. `std::move(obj)` does nothing more than convert the object namespace into a rvalue reference. So that it can be used 
+for (move constructor, move assign constructor, any place/functions that designed to use of temporary value (rvalue))
+3. Yes it is possible to write logic of move stuff (rather than copy) in a copy assign/copy constructor. It is totally possible. But 
+we programmers are responsible for write move logic/ copy logic within corresponding functions.
+
+Referring to the video, here is an example of why/how we should use move.
+```c++
+
+class MY_STRING{
+public:
+  char* my_str;
+  size_t str_length;
+  MY_STRING() {
+    this->my_str = nullptr;
+    this->str_length = 0;
+  }
+  
+  MY_STRING(int size) {
+    this->str_length = size;
+    this->my_str = new char[size];
+  }
+  
+  MY_STRING(const MY_STRING& other) {
+  
+    this->str_length = other.str_length;
+    this->my_str = new char[this->str_length];
+    memcpy(this->my_str, other.my_str, this->str_length);
+  }
+  
+  MY_STRING(MY_STRING&& other) {
+    this->str_length = other.str_length;
+    this->my_str = other.my_str;
+    other.my_str = nullptr;
+    other.str_length = 0;
+  }
+  
+  ~MY_STRING() {
+    if (this->my_str) {
+      delete [] this->my_str;
+      this->my_str = nullptr;
+    }
+  }
+};
+```
+- Use move constructor so that if we use other string(rvalue) to initialize, it will take over the object instead of 
+create a new one. This will save one round of delete array in destructor and allocate memory for new array in constructor.
+- Note that we need to set the original MY_STRING's pointer to an array to nullptr so when it is destructed rater than the 
+object it moves value to, the underlying char array won't be deleted.
 </details>

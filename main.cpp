@@ -18,6 +18,7 @@
 #include "03_Standard_Library/001_Namespace/common_namespace_2.h"
 #include "03_Standard_Library/001_Namespace/different_namespace_same_function.cpp"
 #include "03_Standard_Library/002_Common_Functions/min_max.cpp"
+#include "03_Standard_Library/002_Common_Functions/move.cpp"
 
 //using namespace std;
 
@@ -56,6 +57,7 @@ int main() {
     //using namespace name2; // No error here if we do not call the function
     //func_same(); // error if we call the function
     //test_min_max();
-
+    //test_access_object_after_move();
+    test_access_primitives_after_move();
     return 0;
 }

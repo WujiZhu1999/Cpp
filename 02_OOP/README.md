@@ -56,6 +56,19 @@ This is where Cpp start to become evil, before start, go through:
   - [rvalue use case for vector](05_rvalue_for_vector.pdf) Note that push back will create a copy, use pointer for higher efficiency
   - [how to only allow move constructor](05_how_to_only_allow_move_constructor.pdf)
   - perfect forwarding (to be documented...)
+
+Note: 
+**Copy assign constructor/move assign constructor will only be called if the LHS of `=` expression is an already existing object.**
+```c++
+classType className = ...
+```
+Will cause copy/move/parameter match constructor based on `...` and
+```c++
+classType className;
+...
+className = ...;
+```
+Will cause copy/move assign constructor based on `...` if lvalue reference or rvalue reference or not.
 #### 1 Copy Constructor
 The copy constructor allows a class to create an object by copying an existing object.
 ```c++
