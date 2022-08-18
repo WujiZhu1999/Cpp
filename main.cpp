@@ -19,6 +19,7 @@
 #include "03_Standard_Library/001_Namespace/different_namespace_same_function.cpp"
 #include "03_Standard_Library/002_Common_Functions/min_max.cpp"
 #include "03_Standard_Library/002_Common_Functions/move.cpp"
+#include "03_Standard_Library/002_Common_Functions/forward.cpp"
 
 //using namespace std;
 
@@ -58,6 +59,7 @@ int main() {
     //func_same(); // error if we call the function
     //test_min_max();
     //test_access_object_after_move();
-    test_access_primitives_after_move();
+    //test_access_primitives_after_move();
+    test_forward();
     return 0;
 }

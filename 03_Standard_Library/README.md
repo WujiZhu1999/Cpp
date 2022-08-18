@@ -146,4 +146,31 @@ public:
 create a new one. This will save one round of delete array in destructor and allocate memory for new array in constructor.
 - Note that we need to set the original MY_STRING's pointer to an array to nullptr so when it is destructed rater than the 
 object it moves value to, the underlying char array won't be deleted.
+
+### 3 std::forward
+Forward is used when we have nested functions, we pass the argument from first function to next one, we need to use forward
+to make sure the data type is not changed. For example: 
+- For function templates: https://www.youtube.com/watch?v=srdwFMZY3Hg
+- For move constructor [Example Code](/03_Standard_Library/002_Common_Functions/forward.cpp)
+
+It will preserve the lvalue/rvalue reference characteristics and can achieve generics.The function std::forward, 
+defined in the header <utility>, empowers you to write function templates, which can identically forward their arguments.
+The power of forward will be revisited at template section.
+
+### 4 std::swap
+As the code shown :)
+```c++
+// swap.cpp
+...
+#include <utility>
+...
+template <typename T>
+inline void swap(T& a, T& b){
+  T tmp(std::move(a));
+  a= std::move(b);
+  b= std::move(tmp);
+}
+```
+
+
 </details>
