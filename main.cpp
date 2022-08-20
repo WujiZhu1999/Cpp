@@ -20,6 +20,9 @@
 #include "03_Standard_Library/002_Common_Functions/min_max.cpp"
 #include "03_Standard_Library/002_Common_Functions/move.cpp"
 #include "03_Standard_Library/002_Common_Functions/forward.cpp"
+#include "03_Standard_Library/003_Other_Useful_Functions/bind.cpp"
+#include "03_Standard_Library/003_Other_Useful_Functions/reference_wrapper.cpp"
+
 
 //using namespace std;
 
@@ -60,6 +63,10 @@ int main() {
     //test_min_max();
     //test_access_object_after_move();
     //test_access_primitives_after_move();
-    test_forward();
+    //test_forward();
+    //test_bind();
+    //test_reference_wrapper();
+    //test_reference_wrapper_2();
+    test_reference_wrapper_3();
     return 0;
 }

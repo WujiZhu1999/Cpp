@@ -13,7 +13,10 @@ Standard library can be classified into:
   - std::move
   - std::forward
   - std::swap
-
+- **3 Other Useful Functions**
+  - std::bind & std::function
+  - tuples & pairs
+  - reference wrappers
 <details><summary>1 Namespace</summary>
 
 ## 1 Namespace
@@ -172,4 +175,198 @@ inline void swap(T& a, T& b){
 }
 ```
 
+</details>
+
+<details><summary>3 Other Useful Functions</summary>
+
+## 3 Other useful functions
+
+### 1 std::bind & std::function & std::placeholders
+`std::bind` will take a function and placeholder to formulate new callable object. Which is of type `std::functions`. 
+They are all from the header file `<functional>`
+
+Also, use `std::placeholders::_1` ... `std::placeholders::_10` for placeholder. 
+
+The function should have formatted: `function <returnType(placeHolder types...)>` or can just be captured by `auto`
+
+[Example Code Playground](003_Other_Useful_Functions/bind.cpp)
+
+```c++
+#include <iostream>
+#include <functional>
+
+// for placehoder _1 and _2
+using namespace std::placeholders; 
+
+using std::bind;
+using std::function;
+
+double divMe(double a, double b){ return a/b; };
+
+int main(){
+  std::cout << std::boolalpha;
+  function < double(double, double) > myDiv1= bind(divMe, _1, _2);
+  function < double(double) > myDiv2= bind(divMe, 2000, _1);
+  std::cout << (divMe(2000, 10) == myDiv1(2000, 10)) << '\n';
+  std::cout << (myDiv1(2000, 10) == myDiv2(10));
+}
+```
+
+### 2 pairs & tuples
+`std::pair` within `<utility>`
+- Defined as `std::pair<type1, type2>` 
+- Defined as `std::make_pair(var1, var2)`
+- Access by: `pairObj.first`, `pairObj.second`, `std::get<0>(pairObj)`, `std::get<1>(pairObj)`
+
+```c++
+// pair.cpp
+#include <iostream>
+#include <utility>
+using namespace std;
+
+int main(){
+  pair<const char*, double> charDoub("str", 3.14);
+  pair<const char*, double> charDoub2 = make_pair("str", 3.14);
+  auto charDoub3 = make_pair("str", 3.14);
+
+  cout << charDoub.first << ", " << charDoub.second << "\n";    // str, 3.14
+  charDoub.first = "Str";
+  get<1>(charDoub) = 4.14;
+  cout << charDoub.first << ", " << charDoub.second << "\n";    // Str, 4.14
+  
+  return 0;
+}
+```
+
+`std::tuple`
+- Defined as `std::tuple<type1, type2, ...>`
+- Defined as `std::make_tuple(var1, var2, ...)`
+- Access by: `std::get<x>(tupleObject)`
+
+```c++
+#include <iostream>
+#include <tuple>
+using std::get;
+
+int main(){
+  std::tuple<std::string, int, float> tup1("first", 3, 4.17f);
+  auto tup2= std::make_tuple("second", 4, 1.1);
+
+  std::cout << get<0>(tup1) << ", " << get<1>(tup1) << ", " << get<2>(tup1) << std::endl; // first, 3, 4.17
+  
+  std::cout << get<0>(tup2) << ", " << get<1>(tup2) << ", " << get<2>(tup2) << std::endl; // second, 4, 1.1
+
+  std::cout << (tup1 < tup2) << std::endl; // true
+
+  get<0>(tup2)= "Second";
+
+  std::cout << get<0>(tup2) << "," << get<1>(tup2) << "," << get<2>(tup2) << std::endl;  // Second, 4, 1.1
+
+  std::cout << (tup1 < tup2) << std::endl; // false
+
+  auto pair= std::make_pair(1, true);
+  std::tuple<int, bool> tup= pair;
+  
+  return 0;
+```
+
+The tuple has, like his younger brother std::pair, a default, a copy, and a move constructor. You can swap tuples with the function std::swap.
+
+### 3 Reference Wrappers
+A reference wrapper is a copy-constructive and copy-assignable wrapper for an object of type&, which is defined in the 
+header `<functional>`.
+
+声明于 <functional> 中的 class std::reference_wrapper<> 主要用来“喂 ” reference 给function template, 后者原本以 by value方式接受参数。对于一个给定类型 T ，这个 class 提供 `ref ()` 用以隐式转换为 `T&` ，一个 `cref ()` 用以隐式转换为 `const T&` ，这往往允许 function template 得以操作 reference 而不需要另写特化版本。
+
+`auto r = ref(o)` is same as `reference_wrapper<dectype(o)> r(o)`
+
+For example ([source code]())
+
+```c++
+#include <iostream>
+#include <functional>
+
+template<typename T>
+void functest(T a) {
+    ++a;
+}
+
+void test_reference_wrapper() {
+    int a = 1;
+    int &b = a;
+    std::cout << "a address: " << &a << std::endl;
+    std::cout << "b address: " << &b << std::endl;
+
+    std::cout << "a before functest: " << a << std::endl;
+    //functest(a); // a = 1
+    //functest(b); // a = 1
+    functest(std::ref(a)); // a = 2
+    std::cout << "a after  functest: " << a << std::endl;
+}
+```
+Since the template function is taking a pass by value argument, thus changes will not be made on `a`, only if we pass 
+reference of `a` to it.
+
+Another example:
+```c++
+void myAdd(int a, int b, int &r) {
+    r = a + b;
+}
+
+void test_reference_wrapper_2(){
+    int result = 0;
+    auto f = std::bind(myAdd, std::placeholders::_1, 20, result);
+    f(10);
+    std::cout << "result after  myAdd: " << result << std::endl;
+}
+```
+The following function won't change `result`, since bind will make f do not know if result is still valid at the time of
+calling the function, so it will use pass by value instead. if we change to `std::ref(result)`, then the change will work.
+
+If object do not support transferring from reference wrapper to original object. We need to use `get()` to get the original object.
+
+What really makes `ref()` and `cref()` so important is that it works with STL. So vector push_back for example won't do a copy constructor.
+```c++
+#include <algorithm>
+#include <list>
+#include <vector>
+#include <iostream>
+#include <numeric>
+#include <random>
+#include <functional>
+ 
+void print(auto const rem, std::ranges::range auto const& v) {
+    for (std::cout << rem; auto const& e : v)
+        std::cout << e << ' ';
+    std::cout << '\n';
+}
+ 
+int main()
+{
+    std::list<int> l(10);
+    std::iota(l.begin(), l.end(), -4);
+ 
+    // can't use shuffle on a list (requires random access), but can use it on a vector
+    std::vector<std::reference_wrapper<int>> v(l.begin(), l.end());
+ 
+    std::ranges::shuffle(v, std::mt19937{std::random_device{}()});
+ 
+    print("Contents of the list: ", l);
+    print("Contents of the list, as seen through a shuffled vector: ", v);
+ 
+    std::cout << "Doubling the values in the initial list...\n";
+    std::ranges::for_each(l, [](int& i) { i *= 2; });
+ 
+    print("Contents of the list, as seen through a shuffled vector: ", v);
+}
+```
+will output
+```c++
+Contents of the list: -4 -3 -2 -1 0 1 2 3 4 5 
+Contents of the list, as seen through a shuffled vector: -1 2 -2 1 5 0 3 -3 -4 4 
+Doubling the values in the initial list...
+Contents of the list, as seen through a shuffled vector: -2 4 -4 2 10 0 6 -6 -8 8
+```
+
+Note that reference wrapper are just a wrapper for pointer, which provide accessor `get()`.
 </details>
