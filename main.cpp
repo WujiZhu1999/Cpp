@@ -22,7 +22,8 @@
 #include "03_Standard_Library/002_Common_Functions/forward.cpp"
 #include "03_Standard_Library/003_Other_Useful_Functions/bind.cpp"
 #include "03_Standard_Library/003_Other_Useful_Functions/reference_wrapper.cpp"
-
+#include "03_Standard_Library/004_Smart_Pointers/unique_pointer.cpp"
+#include "03_Standard_Library/004_Smart_Pointers/shared_ptr.cpp"
 
 //using namespace std;
 
@@ -67,6 +68,10 @@ int main() {
     //test_bind();
     //test_reference_wrapper();
     //test_reference_wrapper_2();
-    test_reference_wrapper_3();
+    //test_reference_wrapper_3();
+    //test_unique_pointer();
+    //test_unique_pointer_1();
+    //test_unique_pointer_2();
+    test_shared_ptr();
     return 0;
 }

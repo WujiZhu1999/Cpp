@@ -17,6 +17,10 @@ Standard library can be classified into:
   - std::bind & std::function
   - tuples & pairs
   - reference wrappers
+- **4 Smart Pointers**
+  - `std::unique_ptr`
+  - `std::shared_ptr`
+  - `std::weak_ptr`
 <details><summary>1 Namespace</summary>
 
 ## 1 Namespace
@@ -177,6 +181,7 @@ inline void swap(T& a, T& b){
 
 </details>
 
+
 <details><summary>3 Other Useful Functions</summary>
 
 ## 3 Other useful functions
@@ -280,7 +285,7 @@ header `<functional>`.
 
 `auto r = ref(o)` is same as `reference_wrapper<dectype(o)> r(o)`
 
-For example ([source code]())
+For example ([source code](./003_Other_Useful_Functions/reference_wrapper.cpp))
 
 ```c++
 #include <iostream>
@@ -369,4 +374,209 @@ Contents of the list, as seen through a shuffled vector: -2 4 -4 2 10 0 6 -6 -8 
 ```
 
 Note that reference wrapper are just a wrapper for pointer, which provide accessor `get()`.
+</details>
+
+<details><summary>4 Smart Pointers</summary>
+
+## 4 Smart Pointers
+
+### 1 `std::unique_ptr`
+[Reference from source](./004_Smart_Pointers/std__unique_ptr%20-%20cppreference.com.pdf)
+- `std::unique_ptr` is a smart pointer that owns and manages another object through a pointer and disposes of that object when the unique_ptr goes out of scope.
+- The object is disposed of, using the associated deleter when either of the following happens:
+  - the managing unique_ptr object is destroyed
+  - the managing unique_ptr object is assigned another pointer via `operator=` or `reset()`.
+
+
+It is only move constructable, so enable unique ownership. (after move construct, pointer of original source will be changed to `null_ptr`)
+
+For c++14+ , use `std::make_unique` instead for safety.
+
+APIs:
+- `reset()` : Resets the resource.
+- `release()` : Returns a pointer to the resource and releases it.
+- `swap()` : Swaps the resources.
+- `get()` : Returns a pointer to the resource.
+- `get_deleter()` : Returns the delete function.
+- `operator*` : `*` de-referencing the underlying object
+- `operator->` : `->` access the underlying object
+- `operator[]` : `[]` de-referencing the underlying object
+
+
+[Example Code](./004_Smart_Pointers/unique_pointer.cpp)
+- `test_unique_pointer()`:
+  - how unique pointer should be created (`unique_ptr<T> ptr = unique_ptr<T>(new object(...))`), or replace `new object(...)`
+  with a pointer pointing to object on heap
+  - get deleted as long as code goes out of scope (call destructor of object)
+  - get error if passed an object on stack
+- `test_unique_pointer_1()`:
+  - reset
+  - release
+  - move constructor
+  - swap
+- `test_unique_pointer_2()`:
+  - self defined deleter : deleter needs to be callable with argument of pointer to the object type
+  - `*`, `->`, `[]`
+
+**Note that!!** It is impossible to change the underlying object without knowledge of ptr:
+```c++
+auto ptr = unique_ptr<T>(new T(...));
+ptr.get() = new T(...);
+```
+Will cause an error since `.get()` only return rvalue.
+
+An linked-list example from source:
+```c++
+// unique_ptr-based linked list demo
+struct List
+{
+    struct Node
+    {
+        int data;
+        std::unique_ptr<Node> next;
+    };
+ 
+    std::unique_ptr<Node> head;
+ 
+    ~List()
+    {
+        // destroy list nodes sequentially in a loop, the default destructor
+        // would have invoked its `next`'s destructor recursively, which would
+        // cause stack overflow for sufficiently large lists.
+        while (head)
+            head = std::move(head->next);
+    }
+ 
+    void push(int data)
+    {
+        head = std::unique_ptr<Node>(new Node{data, std::move(head)});
+    }
+};
+```
+It makes the object delete by `head = std::move(head->next);` which push head object out of scope and cause unique_ptr automatically delete get triggerred.
+
+### 2 `std::shared_ptr`
+
+`std::shared_ptr` is copy/move constructable.
+
+`std::shared_ptr` shares ownership of the resource. They have two handles: one for the resource, and one for the 
+reference counter. By copying an `std::shared_ptr`, the reference count is increased by one. It is decreased by one if the
+`std::shared_ptr` goes out of scope. If the reference counter becomes the value 0, the C++ runtime automatically 
+releases the resource.
+
+APIs:
+- everything `unique_ptr` has
+- `use_count()` : Returns the value of the reference counter.
+- `unique()` : Checks if the std::shared_ptr is the exclusive owner of the resource.
+
+Using the `class std::enable_shared_from_this`, we can create objects that return an `std::shared_ptr` to themselves. 
+To do so, we must publicly derive the class from `std::enable_shared_from_this`. So the class ShareMe support the method 
+shared_from_this, and return `std::shared_ptr`. (Have to create the shared pointer once `shated_ptr<...>(obj)` then 
+`obj.shared_from_this()`) can work.
+
+[Example code](./004_Smart_Pointers/shared_ptr.cpp):
+- test_shared_ptr:
+  - `use_count`
+  - `unique`
+  - `shared_from_this`
+  - `ptr when goes out of scope will get destroyed`
+  - `reset will not change the object of other holder, but will cause counter decrease by one`
+
+[Educative site](https://www.educative.io/module/lesson/cpp-standard-library/gxEqV8PQYDY) give an good example about custom
+deletor via callable.
+
+### 3 `std::weak_ptr`
+`std::weak_ptr` is not a classic smart pointer, since it supports no transparent access to the resource, it only borrows
+the resource from a `std::shared_ptr`. It is introduced to solve cyclic reference problem. 
+- Create a weak pointer won't increase shared_ptr count.
+- The constructor take shared pointer as argument
+
+APIs:
+- `expired()` : Checks if the resource was deleted.
+- `lock()` : Creates a `std::shared_ptr` on the resource.
+- `reset()` : Resets the resource.
+- `swap()` : Swaps the resources.
+- `use_count()` : 	Returns the value of the reference counter.
+<details><summary>Code shows the usage</summary>
+
+```c++
+#include <iostream>
+#include <memory>
+
+int main(){
+
+  std::cout << std::boolalpha << std::endl;
+
+  auto sharedPtr=std::make_shared<int>(2011);
+  std::weak_ptr<int> weakPtr(sharedPtr);
+  
+  std::cout << "weakPtr.use_count(): " << weakPtr.use_count() << std::endl;
+  std::cout << "sharedPtr.use_count(): " << sharedPtr.use_count() << std::endl;
+  std::cout << "weakPtr.expired(): " << weakPtr.expired() << std::endl;
+
+  if( std::shared_ptr<int> sharedPtr1 = weakPtr.lock() ) {
+    std::cout << "*sharedPtr: " << *sharedPtr << std::endl;
+    std::cout << "sharedPtr1.use_count(): " << sharedPtr1.use_count() << std::endl;
+  }
+  else{
+    std::cout << "Don't get the resource!" << std::endl;
+  }
+
+  weakPtr.reset();
+  if( std::shared_ptr<int> sharedPtr1 = weakPtr.lock() ) {
+    std::cout << "*sharedPtr: " << *sharedPtr << std::endl;
+    std::cout << "sharedPtr1.use_count(): " << sharedPtr1.use_count() << std::endl;
+  }
+  else{
+    std::cout << "Don't get the resource!" << std::endl;
+  }
+
+  std::cout << std::endl;
+
+}
+```
+
+```c++
+/*
+weakPtr.use_count(): 1
+sharedPtr.use_count(): 1
+weakPtr.expired(): false
+*sharedPtr: 2011
+sharedPtr1.use_count(): 2
+Don't get the resource!
+*/
+```
+</details>
+
+We get cyclic references of `std::shared_ptr` if they refer to each other. If we have a cyclic reference of 
+`std::shared_ptr`, the reference counter will never become 0. If we get a cyclic reference, then both object will never 
+be released cause memory leakage.
+
+### 4 Performance comparison
+`void(*)` pure pointer > `unique_ptr` > `make_unique` > `shared_ptr` > `make_shared`
+
+### 5 Different ways to pass smart pointer
+1. `func(unique_ptr<T> ptr)` 
+- Express that a function assumes ownership of object T.
+- Pass the argument like: `unique_ptr<T> ptr; func(std::move(ptr));` To trigger the move constructor
+- Returns the rvalue reference of pointer afterward if still want to use it.
+
+2. `func(unique_ptr<T>& ptr)`
+- Used to `reset()` or modify something related to pointer (instead of object itself)
+- Pass the argument like: `unique_ptr<T> ptr; func(ptr);`
+
+3. `func(shared_ptr<T> ptr)`
+- For the lifetime of the function body, this method is a shared owner of the resource. At the start of the function 
+body, we will increase the reference counter (pass by value); at the end of the function, we will decrease the reference
+counter; therefore, the resource will stay alive, as long as we use it.
+
+4. `func(shared_ptr<T>& ptr)`
+- Not a shared owner so no guarantee the lifetime of object
+- More likely used to reset() or modify something about the `shared_ptr` itself rather than underlying object
+
+5. `func(const shared_ptr<T>& ptr)`
+- Cannot change ptr
+- To be honest, we should use a pointer `(T*)` or a reference `(T&)` as a parameter instead, because there is no added 
+value in using a  `std::shared_ptr`.
+
 </details>
