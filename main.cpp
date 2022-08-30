@@ -24,6 +24,7 @@
 #include "03_Standard_Library/003_Other_Useful_Functions/reference_wrapper.cpp"
 #include "03_Standard_Library/004_Smart_Pointers/unique_pointer.cpp"
 #include "03_Standard_Library/004_Smart_Pointers/shared_ptr.cpp"
+#include "03_Standard_Library/006_Time_Library/time_lib.cpp"
 
 //using namespace std;
 
@@ -72,6 +73,9 @@ int main() {
     //test_unique_pointer();
     //test_unique_pointer_1();
     //test_unique_pointer_2();
-    test_shared_ptr();
+    //test_shared_ptr();
+    //test_duration_count();
+    //test_epoch();
+    test_clock_casting();
     return 0;
 }

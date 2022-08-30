@@ -22,6 +22,7 @@ Standard library can be classified into:
   - `std::shared_ptr`
   - `std::weak_ptr`
 - **5 Type Traits**
+- **6 Time Library**
 <details><summary>1 Namespace</summary>
 
 ## 1 Namespace
@@ -622,4 +623,54 @@ Also there are composite categories & type relationships: https://en.cppreferenc
 For more details check: https://www.educative.io/module/lesson/cpp-standard-library/JPkDlpDXqlD
 
 
+</details>
+
+<details><summary>6 Time Library</summary>
+
+## 6 Time Library
+
+All defined in `#include <chrono>`
+
+### 1 Clock
+The clock consists of a starting point and a tick. So you can get the current time with the method now.
+Different clock provided from   `std::chrono:: ...` have different property
+
+- `std::chrono::system_clock`: System time, which you can synchronize with the external clock.
+- `std::chrono::steady_clock`: Clock, which can not be adjusted.
+- `std::chrono::high_resolution_clock`: System time with the greatest accuracy.
+
+`std::chrono::system_clock` will refer typically to the 1.1.1970. You can not adjust `std::steady_clock` forward or 
+backward in opposite to two other clocks. The methods `to_time_t` and `from_time_t` can be used to convert between 
+`std::chrono::system_clock` and `std::time_t objects`.
+
+### 2 Duration
+`template <class Rep, class Period = ratio<1>> class duration;`
+While rep means which datatype to store duration, period is unit time while ratio 1 is second.
+
+```c++
+typedef duration<signed int, nano> nanoseconds;
+typedef duration<signed int, micro> microseconds;
+typedef duration<signed int, milli> milliseconds;
+typedef duration<signed int> seconds;
+typedef duration<signed int, ratio< 60>> minutes;
+typedef duration<signed int, ratio<3600>> hours;
+```
+
+`duration.count()` will return time in any unit/ratio you define. `ratio<x,y>` is off ratio x/y \
+`ratio<1,1>` is one second
+
+[Check the code](006_Time_Library/time_lib.cpp):
+- `test_duration_count`: check how `count()` work
+- `test_clock_casting`: convert between different unit of time duration
+  - When Convert from lower larger unit to smaller unit, just use constructor: 
+  `std::chrono::minutes m(hours)`, `std::chrono::seconds s(minutes)` ...
+  - When Convert from smaller unit to larger unit use:
+  `std::chrono::duration_cast<larger_unit>(smaller_unit)`
+  - `hours`, `minutes`, `seconds`, `milliseconds`, `microseconds`, `nanoseconds`
+
+### 3 Time point
+`any_clock.now()` will generate a clock. A time point is consist of a clock and a duration.
+
+[Check the code](006_Time_Library/time_lib.cpp):
+- `test_epoch`: epoch is usually 1970.1.1 and can check time until that
 </details>
