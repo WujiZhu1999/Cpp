@@ -23,6 +23,7 @@ Standard library can be classified into:
   - `std::weak_ptr`
 - **5 Type Traits**
 - **6 Time Library**
+- **7 any, optional, variant**
 <details><summary>1 Namespace</summary>
 
 ## 1 Namespace
@@ -666,11 +667,74 @@ typedef duration<signed int, ratio<3600>> hours;
   `std::chrono::minutes m(hours)`, `std::chrono::seconds s(minutes)` ...
   - When Convert from smaller unit to larger unit use:
   `std::chrono::duration_cast<larger_unit>(smaller_unit)`
-  - `hours`, `minutes`, `seconds`, `milliseconds`, `microseconds`, `nanoseconds`
 
 ### 3 Time point
 `any_clock.now()` will generate a clock. A time point is consist of a clock and a duration.
 
 [Check the code](006_Time_Library/time_lib.cpp):
 - `test_epoch`: epoch is usually 1970.1.1 and can check time until that
+</details>
+
+<details><summary>7 Any, Optional, Variant</summary>
+
+## any, optional, variant
+
+Every time you want to use a union use `std::variant`.
+
+Every time you want to use a void* use `std::any`.
+
+Every time you want to return nullptr as an indication of an error use `std::optional`.
+
+### 1 [`std::any`](007_ANY_OPTIONAL_VARIANT/any.cpp)
+`#include <any>` \
+`std::any` is a type-safe container for single values of any type which is copy-constructible.
+
+There are a few ways to create a `std::any` container `any`. 
+- You can use the various constructors or the factory function `std::make_any`. 
+- By using `any.emplace`, you directly construct one value into any. 
+- `any.reset` lets you destroy the contained object.
+- If you want to know whether the container any has a value, use the method `any.has_value`.
+- You can even get the typeid of the container object via `any.type`. 
+- Thanks to the generic function `std::any_cast` you have access to the contained object. If you specify the wrong type, you will get a `std::bad_any_cast exception`.
+
+### 2 [`std::optional`](007_ANY_OPTIONAL_VARIANT/optional.cpp)
+`#include <optional>`
+
+The various constructors and:
+- the convenience function `std::make_optional` let you define an optional object opt with or
+without a value. 
+- `opt.emplace` will construct the contained value in-place and opt.reset will destroy the container 
+value. 
+- You can explicitly ask a `std::optional` container if it has a value or you can check it in a logical expression.
+- `opt.value` returns the value and 
+- `opt.value_or` returns the value or a default value.
+- If opt has no contained value, the call `opt.value` will throw a `std::bad_optional_access` exception.
+
+### 3 [`std::variant`](007_ANY_OPTIONAL_VARIANT/variant.cpp)
+`#include <variant>`
+
+`std::variant` is a type-safe union. An instance of `std::variant` has a value from one of its types. 
+- The type must not be a reference, array or void. 
+- A `std::variant` can have a type more than once. 
+- A default-initialised `std::variant` is initialised with its first type; therefore, its first type must have a default constructor. 
+- By using `var.index` you get the zero-based index of the alternative held by the `std::variant var`.
+- `var.valueless_by_exception` returns false if the variant holds a value. 
+- By using `var.emplace` you can create a new value in-place. 
+- There are a few global functions used to access a `std:variant`. 
+  - The function template `var.holds_alternative` lets you check if the `std::variant` holds a specified alternative. 
+  - You can use `std::get` with an index and with a type as argument. By using an index, you will get the value. 
+  - If you invoke `std::get` with a type, you only will get the value if it is unique. If you use an invalid index or a non-unique type, you will get a `std::bad_variant_access exception`. 
+  - In contrast to `std::get` which eventually returns an exception, `std::get_if` returns a null pointer in the case of an error.
+
+`std::variant` has an interesting non-member function `std::visit` that allows you to execute a callable on a list of variants. So we don't have to access via `std::get<...>(...)`
+```c++
+  std::vector<std::variant<char, long, float, int, double, long long>>      
+           vecVariant = {5, '2', 5.4, 100ll, 2011l, 3.5f, 2017};
+
+  for (auto& v: vecVariant){        
+    std::visit([](auto&& arg){std::cout << arg << " ";}, v);    
+                                   // 5 2 5.4 100 2011 3.5 2017                
+  }
+```
+
 </details>

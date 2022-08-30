@@ -25,6 +25,9 @@
 #include "03_Standard_Library/004_Smart_Pointers/unique_pointer.cpp"
 #include "03_Standard_Library/004_Smart_Pointers/shared_ptr.cpp"
 #include "03_Standard_Library/006_Time_Library/time_lib.cpp"
+#include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/any.cpp"
+#include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/optional.cpp"
+#include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/variant.cpp"
 
 //using namespace std;
 
@@ -76,6 +79,9 @@ int main() {
     //test_shared_ptr();
     //test_duration_count();
     //test_epoch();
-    test_clock_casting();
+    //test_clock_casting();
+    //test_any();
+    //test_optional();
+    test_variant();
     return 0;
 }
