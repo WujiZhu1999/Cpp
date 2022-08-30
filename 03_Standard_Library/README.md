@@ -21,6 +21,7 @@ Standard library can be classified into:
   - `std::unique_ptr`
   - `std::shared_ptr`
   - `std::weak_ptr`
+- **5 Type Traits**
 <details><summary>1 Namespace</summary>
 
 ## 1 Namespace
@@ -578,5 +579,47 @@ counter; therefore, the resource will stay alive, as long as we use it.
 - Cannot change ptr
 - To be honest, we should use a pointer `(T*)` or a reference `(T&)` as a parameter instead, because there is no added 
 value in using a  `std::shared_ptr`.
+
+</details>
+
+<details><summary>5 Type Traits</summary>
+
+## 5 Type Traits
+The type traits library enables you to check, compare and modify types at compile time. So, there is no overhead on the runtime of your program.
+
+The type traits library and the function static_assert are a powerful pair. 
+- On one side, the functions of the type traits library provide the type information at compile time. 
+- On the other side, the static_assert function checks the given information at compile time.
+
+```c++
+#include <type_traits>
+template <typename T> T fac(T a){
+     static_assert(std::is_integral<T>::value, "T not integral");
+     //...
+}
+fac(10);
+fac(10.1); // with T= double; T not integral
+```
+
+Here are some examples of using type traits, all used as `static_assert(std::is_...(T)::value, "msg_if_false")`
+```c++
+template <class T> struct is_void;
+template <class T> struct is_null_pointer;
+template <class T> struct is_integral; 
+template <class T> struct is_floating_point; 
+template <class T> struct is_array;
+template <class T> struct is_pointer;
+template <class T> struct is_member_object_pointer;
+template <class T> struct is_member_function_pointer;
+template <class T> struct is_enum;
+template <class T> struct is_union;
+template <class T> struct is_class;
+template <class T> struct is_function;
+template <class T> struct is_lvalue_reference;
+template <class T> struct is_rvalue_reference;
+```
+Also there are composite categories & type relationships: https://en.cppreference.com/w/cpp/header/type_traits \
+For more details check: https://www.educative.io/module/lesson/cpp-standard-library/JPkDlpDXqlD
+
 
 </details>
