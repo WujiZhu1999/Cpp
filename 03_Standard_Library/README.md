@@ -586,7 +586,7 @@ value in using a  `std::shared_ptr`.
 <details><summary>5 Type Traits</summary>
 
 ## 5 Type Traits
-The type traits library enables you to check, compare and modify types at compile time. So, there is no overhead on the runtime of your program.
+The `<type_traits>` library enables you to check, compare and modify types at compile time. So, there is no overhead on the runtime of your program.
 
 The type traits library and the function static_assert are a powerful pair. 
 - On one side, the functions of the type traits library provide the type information at compile time. 
