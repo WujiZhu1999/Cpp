@@ -24,6 +24,15 @@ Standard library can be classified into:
 - **5 Type Traits**
 - **6 Time Library**
 - **7 any, optional, variant**
+- **8 Containers**
+  - General Operations
+  - Sequential
+  - Associative
+    - Ordered
+    - Unordered
+  - Adaptors
+  - Iterators
+
 <details><summary>1 Namespace</summary>
 
 ## 1 Namespace
@@ -736,5 +745,47 @@ value.
                                    // 5 2 5.4 100 2011 3.5 2017                
   }
 ```
+
+</details>
+
+<details><summary>8 Containers</summary>
+
+## 8 Containers
+
+### 1 General Operations
+
+There are some general operations that is valid for all containers:
+- Constructor (taking `std::vector` for example):
+  - Default constructor: `std::vector<int> vec1`
+  - Range: `std::vector<int> vec2(vec1.begin(), vec1.end())` [it will cause copy](008_Containers/general_operations.cpp)
+  - Copy: `std::vector<int> vec3(vec2)` 
+  - Copy: `std::vector<int> vec3= vec2`
+  - Move: `std::vector<int> vec4(std::move(vec3))` [it won't cause any copy or move, and will clean the original container](008_Containers/general_operations.cpp)
+  - Move: `std::vector<int> vec4= std::move(vec3)`
+  - Sequence initializer list: `std::vector<int> vec5 {1, 2, 3, 4, 5}`
+  - Sequence initializer list: `std::vector<int> vec5= {1, 2, 3, 4, 5}`
+  - Destructor: `vec5.~vector()`
+  - Clear Element: `vec5.clear()`
+
+Because `std::array` is generated at compile-time, there are a few things that are special. `std::array` has no move 
+constructor and can’t be created with a range or with an initializer list. However, a `std::array` can be initialized 
+with an aggregate initialization. Also, `std::array` has no method for removing its elements.
+- Size `cont #container`
+  - `cont.size()` container size
+  - `cont.empty()` check if empty (`empty()` is faster O(1) compared to `cont.size() == 0` O(n) and support readability)
+- Access `cont #container`
+  - `cont.begin()`, `cont.end()`: Pair of iterators to iterate forward.
+  - `cont.cbegin()`, `cont.cend()`: Pair of iterators to iterate const forward.
+  - `cont.rbegin()`, `cont.rend()`: Pair of iterators to iterate backward.
+  - `cont.crbegin()`, `cont.crend()`: Pair of iterators to iterate const backward.
+Note these are pointer, so `*(cont.begin()+x)` is indexing xth element.
+- Assign & swap: `std::swap` can swap objects between containers (just swap, without recreate or whatever)
+- Compare: `==`, `!=`, `<`, `>`, `<=`, `>=` (Unordered associative containers support only the comparison operator == and !=.)
+  - Associate compare by: key1->value1->key2->value2->...
+  ```c++
+  map<int, string> uSet1{{1, "One"}, {3, "two"}};
+  map<int, string> uSet2{{1, "one"}, {2, "Two"}};
+  cout << (uSet1 < uSet2) << endl;     // 1
+  ```
 
 </details>

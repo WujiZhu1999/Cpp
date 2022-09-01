@@ -28,6 +28,7 @@
 #include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/any.cpp"
 #include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/optional.cpp"
 #include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/variant.cpp"
+#include "03_Standard_Library/008_Containers/general_operations.cpp"
 
 //using namespace std;
 
@@ -82,6 +83,10 @@ int main() {
     //test_clock_casting();
     //test_any();
     //test_optional();
-    test_variant();
+    //test_variant();
+    //test_general_container();
+    //test_general_begin_end();
+    test_general_swap();
+
     return 0;
 }
