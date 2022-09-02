@@ -29,6 +29,7 @@
 #include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/optional.cpp"
 #include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/variant.cpp"
 #include "03_Standard_Library/008_Containers/general_operations.cpp"
+#include "03_Standard_Library/008_Containers/sequential_containers.cpp"
 
 //using namespace std;
 
@@ -86,7 +87,10 @@ int main() {
     //test_variant();
     //test_general_container();
     //test_general_begin_end();
-    test_general_swap();
+    //test_general_swap();
+    //test_array();
+    test_vector();
+    //test_list();
 
     return 0;
 }

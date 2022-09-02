@@ -787,5 +787,114 @@ Note these are pointer, so `*(cont.begin()+x)` is indexing xth element.
   map<int, string> uSet2{{1, "one"}, {2, "Two"}};
   cout << (uSet1 < uSet2) << endl;     // 1
   ```
+  
+### 2 Sequential Containers
+
+There are five sequential containers: `std::array`, `std::vector`, `std::deque`, `std::list`, `std::forward_list` \
+Here is a comparison table:
+![img](008_Containers/sequential_compare.png)
+[Code with test cases about sequential containers](008_Containers/sequential_containers.cpp)
+
+#### [(1) `std::array`](https://en.cppreference.com/w/cpp/container/array)
+- `std::array`'s memory is allocated at compile time. So do not support move constructor
+- Constructor
+  - `std::array<int, 10> arr`: The 10 elements are not initialized.
+  - `std::array<int, 10> arr{}`: The 10 elements initialized to 0 by default.
+  - `std::array<int, 10> arr{1, 2, 3, 4, 5}`: The unspecified elements are initialized to 0 by default.
+- Access `arr`
+  - `arr[n]` may work even if n out of bound
+  - `arr.at(n)` will check at run time that if n goes out of bound, run time will throw
+  - `std::get<n>(arr)` will check at compile time that if n > arr.size() will throw compile error
+
+All others APIs are same as general operation for containers.
+
+#### [(2) `std::vector`](https://en.cppreference.com/w/cpp/container/vector)
+
+- `std::vector` is 95% solution
+- Constructor
+  - `std::vector<int> vec(10)` create with size 10
+  - `std::vector<int> vec{10}` create with one element 10
+  - `std::vector<int> vec(10, 1234)` create with size 10 and all fill with 1234
+  - `std::vector<int> vec1(vec2.begin(), vec2.end())` this will result in copy of objects
+  - `std::vector<int> vec1(std::move(vec2))` transfer objects & vec2 will have `nullptr` for underlying array
+- `std::vector<cls> vec(n)` will create n objects by default constructor
+- `vec.push_back(obj)`
+  - Will add a copy of object (not object itself!! which will definitely cause copy construction unless pass a rvalue object to it) to the end of list
+  - If reach maximum capacity, will double, and
+    - copy all object of original vector to the new one if `cls(cls&& _) noexcept{}` is not available
+    - move otherwise (MAKING MOVE CONSTRUCTOR noexcept!!!!!!)
+- `vec.resize(x)`
+  - if new size > current size, will push until `vec` have that many objects
+  - if new size < current size, will delete until `vec` have that many objects
+- `vec.insert(x)`
+  - copy assignment will be called (not copy constructor) to move all other elements backward by one
+  - x will be inserted via copy/move constructor follow the same rules as `push_back`
+  - `vec.insert(vec.begin()+x, item)` insert at x-th indexed place
+- `vec.emplace_back(args...)` Creates a new element in vec with args ... .
+- `vec.emplace(iterator_pos, args...)` Creates a new element before pos with the args in vec and returns the new position of the element.
+- `vec.erase(iterator)` Removes the element at pos(iterator).
+- `vec.erase(iterator-begin, iterator-end)`  Removes the elements in the range [first, last).
+- `vec.reserve(n)` reserve n elements without creating new stuff (will move to new array is reserve size is larger than current vector capacity)
+- `vec.shrink_to_fit()` release all unused memory (move everything to a smaller vector)
+
+#### [(3) `std::deque`](https://en.cppreference.com/w/cpp/container/deque)
+`std::deque` is double ended queue so insert on both side is O(1)
+![img.png](008_Containers/deque_memory_block.png)
+
+It is done by having vector of vector (many blocks of memory)
+- When we insert an element in end it stores that in allocated memory block until it gets filled and when this memory block gets filled with elements then it allocates a new memory block and links it with the end of previous memory block. Now further inserted elements in the back are stored in this new memory block.
+- When we insert an element in front it allocates a new memory block and links it with the front of previous memory block. Now further inserted elements in the front are stored in this new memory block unless it gets filled.
+
+Since access means in deque is done by:
+1. Based on index get the memory block O(1)
+2. Transfer global index to local index (index in memory block) O(1)
+3. Access local vector O(1)
+So it is constant time access.
+
+- `std::deque::insert` behave same like the one in vector (we can insert more than one element if we pass an initialization list as second argument)
+- `std::deque::emplace` behave same like the one in vector
+- `std::deque::erase` erase element by position
+- `std::deque::push_back` as vector
+- `std::deque::push_front` push front
+- `std::deque::emplace_back` create a new element at back with args
+- `std::deque::emplace_front` same as above but at front
+- `std::deque::pop_back` get one from back
+- `std::deque::pop_front` get one from front
+
+#### [(4) `std::list`](https://en.cppreference.com/w/cpp/container/list)
+
+`std::list` is a doubled linked list. `std::list` needs the header <list>.
+- It supports no random access. So we need to move the iterator `std::advance(li.begin(), x)` to get the (x+1)th element, can advance both forward and backward(negative advance value).
+- Accessing an arbitrary element is slow because we might have to iterate through the whole list.
+- Adding or removing an element is fast, if the iterator points to the right place.
+- If we add or remove an element, the iterator remains valid.
+- It has common modifiers: `clear`, `insert`, `emplace`, `erase`, `push_back`, `emplace_back`, `pop_back`, `push_front`, `emplace_front`, `pop_front`, `resize`, `swap`
+- `push_...` have same copy/move logic as vector `push_back`
+
+- Special Modifiers
+  - `lis.merge(c)` Merges the sorted list c into the sorted list lis, so that lis remains sorted. (works like merge sort, compare and push smaller one, then remaining list) need to define `operator<` in order to let it work
+  - `lis.merge(c, comparator)` Merges the sorted list c into the sorted list lis, so that lis remains sorted. Uses op as sorting criteria.
+  - `lis.remove(val)` Removes all elements from lis with value val.
+  - `lis.remove_if(pre)` Removes all elements from lis, fulfilling the predicate pre.
+  - `lis.unique()` Removes adjacent element with the same value. (values not adjacent but with same value will both keep)
+  - `lis.unique(pre)` Removes adjacent elements, fulfilling the predicate pre.
+
+#### [(5) `std::forward_list`](https://en.cppreference.com/w/cpp/container/forward_list)
+`std::forward_list` is a singly linked list, which needs the header `<forward_list>`. `std::forward_list` has a drastically reduced interface and is optimized for minimal memory requirements.
+
+- It doesn’t support the random access. (and iterator cannot move backward)
+- The access of an arbitrary element is slow because in the worst case, we have to iterate forward through the whole list.
+- To add or remove an element is fast, if the iterator points to the right place.
+- If we add or remove an element, the iterator remains valid.
+- APIs:
+  - `forw.before_begin()` Returns an iterator before the first element.
+  - `forw.emplace_after(pos, args...)` Creates an element after pos with the arguments args....
+  - `forw.emplace_front(args...)` Creates an element at the beginning of forw with the arguments args....
+  - `forw.erase_after(pos, ...)` Removes from forw the element pos or a range of elements, starting with pos.
+  - `forw.insert_after(pos, ...)` Inserts new elements after pos. These elements can be single elements, ranges or initialiser lists.
+  - `forw.merge(c)` Merges the sorted forward list c into the sorted forward list forw, so that forw keeps sorted.
+  - `forw.merge(c, op)` Merges the forward sorted list c into the forward sorted list forw, so that forw keeps sorted. Uses op as sorting criteria.
+  - `forw.unique()` Removes adjacent element with the same value.
+  - `forw.unique(pre)` Removes adjacent elements, fulfilling the predicate pre.
 
 </details>
