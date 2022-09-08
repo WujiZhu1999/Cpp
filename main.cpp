@@ -30,6 +30,7 @@
 #include "03_Standard_Library/007_ANY_OPTIONAL_VARIANT/variant.cpp"
 #include "03_Standard_Library/008_Containers/general_operations.cpp"
 #include "03_Standard_Library/008_Containers/sequential_containers.cpp"
+#include "03_Standard_Library/008_Containers/associative_containers.cpp"
 
 //using namespace std;
 
@@ -89,8 +90,10 @@ int main() {
     //test_general_begin_end();
     //test_general_swap();
     //test_array();
-    test_vector();
+    //test_vector();
     //test_list();
+    //test_map();
+    test_unordered_map();
 
     return 0;
 }

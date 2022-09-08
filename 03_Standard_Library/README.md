@@ -897,4 +897,196 @@ So it is constant time access.
   - `forw.unique()` Removes adjacent element with the same value.
   - `forw.unique(pre)` Removes adjacent elements, fulfilling the predicate pre.
 
+### 3 Associate Containers
+There are eight associate containers:
+`map`, `set`, `multimap`, `multiset`, `unordered_map`, `unordered_set`, `unordered_multimap`, `unordered_multiset`
+
+- `map`/`set`: key-value, key
+- `multi<map/set>`/`<map/set>`: multiple key, unique key
+- `unordered_<map/set/>`: hash based key/ BR-tree based sorted key
+
+All of them have similar insertion/deletion APIs like `insert()`, `emplace()`, `erase()`
+
+#### [1] Ordered associate container
+Underlying is a Red-Black tree that manages the sorted keys:
+- [RB basic](008_Containers/RB-tree/RB-trees_01_basics.mp4)
+- [RB_rotation](008_Containers/RB-tree/RB-trees_02_rotations.mp4)
+- [RB_insertion](008_Containers/RB-tree/RB-trees_03_insertion_strategy.mp4)
+- [RB_insertion_examples](008_Containers/RB-tree/RB-trees_04_insertion_examples.mp4)
+- [RB_deletion](008_Containers/RB-tree/RB-trees_05_deletions.mp4)
+
+Since key needs to be comparable so they can be managed by a RB-tree. All keys in ordered associate container needs to implement `operator<`.
+
+Note that increment and decrement of iterator on sorted associate is O(log(N)). (go left by one, then keep going right) (go right by one, then keep going left)...
+```c++
+//gcc-4.8.1/libstdc++-v3/src/c++98/tree.cc
+static _Rb_tree_node_base*
+local_Rb_tree_increment(_Rb_tree_node_base* __x) throw ()
+{
+if (__x->_M_right != 0)
+{
+__x = __x->_M_right;
+while (__x->_M_left != 0)
+__x = __x->_M_left;
+}
+else
+{
+_Rb_tree_node_base* __y = __x->_M_parent;
+while (__x == __y->_M_right)
+{
+__x = __y;
+__y = __y->_M_parent;
+}
+if (__x->_M_right != __y)
+__x = __y;
+}
+return __x;
+}
+
+_Rb_tree_node_base*
+_Rb_tree_increment(_Rb_tree_node_base* __x) throw ()
+{
+return local_Rb_tree_increment(__x);
+}
+
+const _Rb_tree_node_base*
+_Rb_tree_increment(const _Rb_tree_node_base* __x) throw ()
+{
+return local_Rb_tree_increment(const_cast<_Rb_tree_node_base*>(__x));
+}
+```
+
+`<multi<map/set>>`: http://www.aoc.nrao.edu/php/tjuerges/ALMA/STL/html-4.1.2/stl__tree_8h-source.html#l00850
+```c++
+insert_equal(const _Val& __v)
+00851     {
+00852       _Link_type __x = _M_begin();
+00853       _Link_type __y = _M_end();
+00854       while (__x != 0)
+00855     {
+00856       __y = __x;
+00857       __x = _M_impl._M_key_compare(_KeyOfValue()(__v), _S_key(__x)) ?
+00858             _S_left(__x) : _S_right(__x);
+00859     }
+00860       return _M_insert(__x, __y, __v);
+00861     }
+```
+The difference is that multi-map won't check key equality, and will keep searching down the tree until find insertion point.
+
+```c++
+template < class key, class val, class Comp= less<key>,
+           class Alloc= allocator<pair<const key, val> >
+class map;
+```
+Map needs less comparator and allocator.
+
+```c++
+template < class T, class Comp = less<T>,
+           class Alloc = allocator<T> >
+class set;
+```
+Set needs allocator that only allocate keys.
+
+**`std::map`**
+
+- self defined class for key needs to support `operator<` check code [test_map](008_Containers/associative_containers.cpp)
+- [moving objects into map](008_Containers/associative_containers.cpp):
+  - `bin[x] = ?` will first create an object with key x, then use copy assign/move assign operator
+  - `bin[x]` if x not exist, will initialize one. If x exist, it will just give it out
+  - `emplace` can create object instead of copy, move to it...
+  - moving r-value objects into map follow same logic as vector, check code example.
+  - Probably should use smart pointers :)
+  - We can pass in comparator when constructing map: `std::map<int, std::string, std::greater<int>>`
+- APIs: https://en.cppreference.com/w/cpp/container/map
+  - access: `at`, `[]`
+  - iterators: `<c><r><begin/end>`, `itr`:
+    - `itr->first` key
+    - `itr->second` value
+  - capacity:
+    - `empty`
+    - `size`
+    - `max_size`
+  - modifiers:
+    - `clear` clear all
+    - `insert` insert key-val pair
+    - `insert_or_assign` assign if key exist
+    - `emplace` create at place
+    - `try_emplace` emplace if key not exist
+    - `erase` erase based on an iterator (pointer) or a pair (range), it will return a pointer point to next largest element
+    - `swap`
+    - `extract`: https://en.cppreference.com/w/cpp/container/map/extract change key without reallocation
+    - `merge` insert nodes from one by one to another
+  - lookup:
+    - `count`: count keys (compare equality)
+    - `find`: finds element with specific key (no guarantee it is the first occurrence). `bin.end()` if not found
+    - `ordAssCont.lower_bound(key)`: return the first key in the iterator where the key can be inserted
+    - `ordAssCont.upper_bound(key)`: return the last position where the key can be inserted (key this iterator currently point to should be larger than the searching key)
+    - `ordAssCont.equal_range(key)`: (lower_bound, upper_bound) range
+    - Iterators found here can be incremented and decremented.
+
+**`std::set`**
+
+APIs: https://en.cppreference.com/w/cpp/container/set
+- access: na
+- iterators: `<c><r><begin/end>`, `*itr` for access
+- capacity: `empty`, `size`, `max_size`
+- modifiers: `clear`, `insert`, `emplace`, `erase`, `swap`, `extract`, `merge`
+- lookup: `count`, `find`, `lower_bound`, `upper_bound`, `equal_range`, `contains` c++ 20+
 </details>
+
+**`std::multimap`, `std::multiset`**
+The only difference is that they do not support accessors like `at` & `[]` (since there will be multiple answers).
+They only support access through look up functions `count`, `find`, `lower_bound`, `upper_bound`, `equal_range` followed by increment and decrement operator.
+
+#### [2] Unordered Containers
+
+Firstly, it is hash based, so the logic is pretty much same as java:
+- First check hash val, then check equality for key collision
+- If only hash collision, then linked list, or RB tree if linked list size > 8
+
+Keys have to be [check example code](008_Containers/associative_containers.cpp):
+- Comparable : `bool operator== (const cls& other) const;` Note that const at the end of function means this function will not change any stuff of the object calling this function. const at the start of this function means return type is const, which make is unable to be changed after initialization, useful when passing pointers. const parameter means parameter is not changeable.
+- Available as hash value: pass the callable as the third/second parameter to map/set constructor: `std::size_t (const cls& other) const {... return int}`
+- Copyable or Movable : according to sample code, copyable is a must.
+
+Value have to be:
+- Default constructable
+- Copyable or Movable
+
+**`std::unordered_map`**
+APIs:
+- iterators (it is not ordered): `<c>begin(), <c>end()`
+- capacity: `empty`, `size`, `max_size`
+- modifiers:
+  - `clear` clear all
+  - `insert` insert as other container, check sample code
+  - `insert_or_assign` assign if key found
+  - `emplace` construct in place
+  - `try_emplace` put if not exist
+  - `erase` remove by iterator
+  - `swap` 
+  - `extract` to change key/val
+  - `merge` there is no order, so pure merge
+- lookup:
+  - `at` 
+  - `[]`
+  - `count`
+  - `find`
+  - `contains` C++ 20+
+  - `equal_range` return any iterators that have matching keys
+- bucket:
+  - `bucket_count` current bucket size
+  - `max_bucket_count` max amount of bucket
+  - `bucket_size(int n)` the number of elements in the bucket with index n
+  - `bucket` return bucket for specific key (return index)
+- hash:
+  - `load_factor` #elements/#buckets
+  - `max_load_factor` max load_factor before rehash
+  - `rehash(n)` reserve at least n buckets and rehash
+  - `reserve` reserve space for at least specified number of elements and regenerate hash table
+
+The number of buckets is called capacity, the average number of elements for each bucket is called the load factor. In general, the C++ runtime generates new buckets if the load factor is greater than 1. This process is called rehashing and can also be triggered explicitly
+
+**`std::unordered_set`** :https://en.cppreference.com/w/cpp/container/unordered_set generally same as set api\
+**`std::unordered_multimap`** :https://en.cppreference.com/w/cpp/container/unordered_multimap
+**`std::unordered_multiset`** :https://en.cppreference.com/w/cpp/container/unordered_multiset
