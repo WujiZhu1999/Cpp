@@ -1032,7 +1032,7 @@ APIs: https://en.cppreference.com/w/cpp/container/set
 - capacity: `empty`, `size`, `max_size`
 - modifiers: `clear`, `insert`, `emplace`, `erase`, `swap`, `extract`, `merge`
 - lookup: `count`, `find`, `lower_bound`, `upper_bound`, `equal_range`, `contains` c++ 20+
-</details>
+
 
 **`std::multimap`, `std::multiset`**
 The only difference is that they do not support accessors like `at` & `[]` (since there will be multiple answers).
@@ -1090,3 +1090,4 @@ The number of buckets is called capacity, the average number of elements for eac
 **`std::unordered_set`** :https://en.cppreference.com/w/cpp/container/unordered_set generally same as set api\
 **`std::unordered_multimap`** :https://en.cppreference.com/w/cpp/container/unordered_multimap
 **`std::unordered_multiset`** :https://en.cppreference.com/w/cpp/container/unordered_multiset
+</details>
