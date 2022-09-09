@@ -30,8 +30,7 @@ Standard library can be classified into:
   - Associative
     - Ordered
     - Unordered
-  - Adaptors
-  - Iterators
+- **9 Adaptors & Iterators & Callable**
 
 <details><summary>1 Namespace</summary>
 
@@ -1090,4 +1089,138 @@ The number of buckets is called capacity, the average number of elements for eac
 **`std::unordered_set`** :https://en.cppreference.com/w/cpp/container/unordered_set generally same as set api\
 **`std::unordered_multimap`** :https://en.cppreference.com/w/cpp/container/unordered_multimap
 **`std::unordered_multiset`** :https://en.cppreference.com/w/cpp/container/unordered_multiset
+</details>
+
+<details><summary>9 Adaptors, Iterators & Callable</summary>
+
+## 1 Adaptors
+C++ have three adaptors: `std::stack`, `std::queue`, `std::priority_queue`.
+
+- adaptors support a reduced interface for existing sequential containers
+- adaptors can not be used with algorithms of the Standard Template Library
+- By default, using deque for underlying container (can be initialized with other container)
+```c++
+template <typename T, typename Container= deque<T>>
+class stack;
+```
+
+### [stack](https://en.cppreference.com/w/cpp/container/stack)
+APIs:
+- `top` access the top elements
+- `empty` check if empty
+- `size` return number of elements
+- `push` insert elements at top
+- `emplace` construct elements in place
+- `pop` remove top elements
+- `swap` swap the content
+
+[Constructors](https://en.cppreference.com/w/cpp/container/stack/stack):
+- `std::stack<T>` create a stack with nothing (underlying container is deque)
+- `std::stack<T, std::vector<...>>` create a stack and specify underlying container as vector
+  - if `std::stack<T, std::vector<T>> bin(vec)` will call copy constructor of underlying vector
+  - if `...bin(std::move(vec))` will cause no extra operation (see code)
+- if items size go out of underlying container size, the expansion logic follows underlying container
+
+### [queue](https://en.cppreference.com/w/cpp/container/queue)
+APIs:
+- `front`, `back`
+- `empty`, `size`
+- `push`, `emplace`, `pop`, `swap`
+
+Note if we use vector to construct a queue, `pop` will not work since `std::vector` do not support pop front API.
+
+### [priority_queue](https://en.cppreference.com/w/cpp/container/priority_queue)
+APIs:
+- `top`
+- `empty`, `size`
+- `push`, `emplace`
+- `pop`
+- `swap`
+
+Note that `pop` is returning a const reference. If we need to modify the content, shared pointer is a much faster solution.
+
+## 2 Iterators
+Iterators are generalizations of pointers which:
+- represent positions in a container
+- provide powerful iteration and random access in a container
+
+There are three types of iterators:
+- Forward Iterators
+  - `++it`, `it++`, `*it`, `it1 == it2`, `it1 != it2`
+  - unordered associative container
+  - `std::forward_list`
+- Bidirectional Iterators
+  - Every operation above, `--it`, `it--`
+  - Every data structure above, ordered associative container, `std::list`
+- Random access Iterators
+  - `it[n]`, `it+=n`, `it-=n`, `n+it`, `it1-it2`show distance, comparison
+  - `array`, `vector`, `deque`, `string`
+
+
+- `begin`,`end`,`rbegin`,`rend` generate the iterator that move forward and backward via `++`
+- `prev(ptr)`, `next(ptr)` can also be used to shift pointer forward and backward
+- `std::distance(fir, sec)` does the same thing as `fir - sec`
+- `std::advance(itr, n)` put the iterator n step forward (or backward if n is a negative value)
+
+One of another useful application of iterator is inserter. The memory for the elements will automatically be provided.
+```c++
+#include <iostream>
+#include <iterator>
+#include <queue>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+int main(){
+  
+  std::deque<int> deq{5, 6, 7, 10, 11, 12};
+  std::vector<int> vec{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+
+  std::copy(std::find(vec.begin(), vec.end(), 13), vec.end(), std::back_inserter(deq));
+
+  for (auto d: deq) std::cout << d << " "; // 5 6 7 10 11 12 13 14 15
+  std::cout<<std::endl;
+
+  std::copy(std::find(vec.begin(), vec.end(), 8),
+  std::find(vec.begin(), vec.end(), 10),
+  std::inserter(deq, std::find(deq.begin(), deq.end(), 10)));
+  for (auto d: deq) std::cout << d << " "; // 5 6 7 8 9 10 11 12 13 14 15
+  std::cout<<std::endl;
+
+  std::copy(vec.rbegin()+11, vec.rend(),
+  std::front_inserter(deq));
+  for (auto d: deq) std::cout << d << " "; // 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+  std::cout<<std::endl;
+  
+  return 0;
+}
+```
+Note for the code above, inserter appear as an entry point for stuff to be copied to. For:
+- `back_inserter` continue call `itr = cont.push_back(itr, *itr_provided)` `++itr_provided`
+- `front_inserter` continue call `itr = cont.push_front(itr, *itr_provided)` `++itr_provided`
+- same for `inserter`
+So we have to use `rbegin` and `rend` to control the sequence of push front.
+
+The same thing can also be used to move(instead of copy) one vector to the end of another vector:
+```c++
+void MoveAppend(std::vector<X>& src, std::vector<X>& dst) 
+{
+    if (dst.empty())
+    {
+        dst = std::move(src);
+    }
+    else
+    {
+        dst.reserve(dst.size() + src.size());
+        std::move(std::begin(src), std::end(src), std::back_inserter(dst));
+        src.clear();
+    }
+}
+```
+For more examples, check `istream`/`ostream` usage (https://www.educative.io/module/lesson/cpp-standard-library/JYzJ08x0joK)
+
+## 3 Callables
+- functions them-self
+- functors: `? operator() (...)`
+- `[] () {...}` lambda
 </details>

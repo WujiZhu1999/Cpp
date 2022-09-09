@@ -80,10 +80,18 @@ void test_vector() {
     std::cout << vec2.capacity() << std::endl;
 
     //insert in the middle
-    std::cout << "------------------insert_at_middle------------------------\n";
+    std::cout << "------------------insert_at_end------------------------\n";
     std::vector<sequential_container_test_class> vec3(5);
     vec3.reserve(6);
     vec3.insert(vec3.end(), sequential_container_test_class());
+
+    //insert one vector to another
+    std::cout << "------------------insert_one_vector_to_another------------------------\n";
+    std::vector<sequential_container_test_class> vec4(5), vec5(4);
+    vec4.reserve(10);
+    std::cout << "------------------end-------------------------------------\n";
+    std::move(vec5.begin(), vec5.end(), std::back_inserter(vec4));
+
     std::cout << "------------------end-------------------------------------\n";
 
 }

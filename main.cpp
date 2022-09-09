@@ -31,6 +31,7 @@
 #include "03_Standard_Library/008_Containers/general_operations.cpp"
 #include "03_Standard_Library/008_Containers/sequential_containers.cpp"
 #include "03_Standard_Library/008_Containers/associative_containers.cpp"
+#include "03_Standard_Library/009_Adaptors_Iterators_Callable/adaptors.cpp"
 
 //using namespace std;
 
@@ -90,10 +91,12 @@ int main() {
     //test_general_begin_end();
     //test_general_swap();
     //test_array();
-    //test_vector();
+    test_vector();
     //test_list();
     //test_map();
-    test_unordered_map();
-
+    //test_unordered_map();
+    //test_stack();
+    //test_queue();
+    //test_priority_queue();
     return 0;
 }
