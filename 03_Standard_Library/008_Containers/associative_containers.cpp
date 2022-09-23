@@ -83,6 +83,18 @@ void test_map() {
     bin[6];
 
     //associative_container_test_class cls1 = bin[2];
+
+    // 3. Check how map iterator forward work
+    std::cout << "Map Iterator Forward Start --------------------------\n";
+    std::map<int, string> bin_int;
+    bin_int.insert(std::make_pair(1, "One"));
+    bin_int.insert(std::make_pair(2, "Two"));
+    auto itr = bin_int.find(2);
+
+    std::cout << (itr++)->first << " ||| " << (itr==bin_int.end()) <<std::endl;
+    itr = bin_int.find(1);
+    std::cout << (--itr)->first << std::endl;
+    std::cout << "Map Iterator Forward End ----------------------------\n";
 };
 
 class unordered_test_cls: public associative_container_test_class {
@@ -151,4 +163,18 @@ void test_unordered_map() {
     bin1.merge(bin3);
     std::cout << "--------------------check merge end----------------\n";
 
+}
+
+void test_unordered_multimap() {
+    std::unordered_multimap<int, int> bin;
+    bin.insert(std::make_pair(1,1));
+    bin.insert(std::make_pair(1,3));
+    bin.insert(std::make_pair(1,2));
+
+
+    auto itr = bin.find(1);
+    while (itr != bin.end()) {
+        std::cout << itr->second << std::endl;
+        ++itr;
+    }
 }

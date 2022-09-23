@@ -91,10 +91,11 @@ int main() {
     //test_general_begin_end();
     //test_general_swap();
     //test_array();
-    test_vector();
+    //test_vector();
     //test_list();
     //test_map();
     //test_unordered_map();
+    test_unordered_multimap();
     //test_stack();
     //test_queue();
     //test_priority_queue();
